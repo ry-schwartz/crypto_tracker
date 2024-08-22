@@ -1,0 +1,421 @@
+/* --- Global Styles --- */
+* {
+    background-color: #140126;
+    box-sizing: border-box;
+    color: #FFF;
+    padding: 0;
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+    font-weight: normal;
+    /* border: solid 1px red; */
+}
+
+body {
+    overflow: hidden;
+}
+
+input[type='text'], 
+.winners-display, 
+.losers-display, 
+.winner-loser-coin, 
+.winner-loser-heading, 
+img, 
+p,
+h2, 
+.coin-image-display,
+.stats-display,
+.stats,
+.outer-news-display,
+.news-display,
+.news-items,
+.chart-display {
+    background-color: #1B0140;
+}
+
+header {
+    width: 100%;
+}
+
+nav {
+    width: 80%;
+    height: 12vh;
+    margin: 0 auto;
+    border-bottom: solid 2px #6805F2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+h1 {
+    color: #6805F2;
+    font-size: 1.25em;
+}
+
+h3 {
+    padding: 1em;
+}
+
+p {
+    padding: 0.25em;
+}
+
+a {
+    text-decoration: none;
+}
+
+img {
+    padding: 0.5em;
+    border-radius: 100px;
+}
+
+/* --- Home Page --- */
+form {
+    width: 80%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+input[type='text'] {
+    border: none;
+    border-radius: 100px;
+    color: #FFF;
+    padding: 0.25em 1.5em;
+    font-size: 1.25em;
+    margin-right: 2%;
+    width: 60%;
+}
+
+input::placeholder {
+    color: #FFF;
+}
+
+input[type='submit'] {
+    border: none;
+    border-radius: 100px;
+    background-color: #6805F2;
+    color: #FFF;
+    padding: 0.25em 3em;
+    font-size: 1.25em;
+}
+
+input[type='submit']:hover {
+    cursor: pointer;
+    transform: scale(1.1);
+    transition: transform 0.2s ease-in-out;
+}
+
+.winners-losers-display {
+    width: 80%;
+    height: 47vh;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.winners-display, .losers-display {
+    width: 45%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1em;
+    border-radius: 25px;
+}
+
+.winner-loser-coin {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75em;
+}
+
+.winner-loser-coin:hover {
+    border-radius: 10px;
+    border: solid 2px #6805F2;
+    transform: scale(1.05);
+    transition: transform 0.2s ease-in-out;
+
+}
+
+.winner-loser-second-cell, .winner-loser-third-cell {
+    width: 35%;
+    text-align: center;
+}
+
+.small-coin-image, .up-down-arrow {
+    max-height: 60px;
+    max-width: 60px;
+}
+
+.down-arrow {
+    transform: rotate(180deg);
+}
+
+.top-coins-display {
+    height: 39vh;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.top-coins {
+    max-width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.top-coins-heading {
+    font-size: 2em;
+    padding: 0.5em;
+    background-color: #140126 !important;
+}
+
+.top-coin {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2em;
+}
+
+.top-coin:hover {
+    transform: scale(1.1);
+    transition: transform 0.2s ease-in-out;
+
+}
+
+.large-coin-image {
+    max-height: 150px;
+    padding: 2em;
+}
+
+.top-coin-name {
+    font-size: 1.25em;
+    color: #6805F2;
+}
+
+/* --- Coin View Page --- */
+.back-button-container {
+    width: 80%;
+    margin: 1em auto;
+}
+
+.back-button {
+    display: block;
+    font-size: 1.5em;
+    color: #6805F2;
+    width: 25%;
+}
+
+.back-button:hover {
+    color: #FFF;
+
+}
+
+.coin-home-display {
+    width: 80%;
+    height: 70vh;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 30% 70%;
+    grid-template-rows: 30% 70%;
+    gap: 1em;
+}
+
+.coin-home-image {
+    max-width: 100px;
+}
+
+.coin-image-display, .stats-display, .news-display, .chart-display {
+    border-radius: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.coin-home-heading {
+    padding: 0.75em;
+}
+
+.coin-image-display {
+    justify-content: center;
+}
+
+.stats {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    width: 90%;
+}
+
+.stat {
+    text-align: center;
+}
+
+.outer-news-display {
+    padding: 0.25em 0 0.25em 0.25em;
+    border-radius: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.news-display {
+    width: 95%;
+    height: 100%;
+    overflow-y: scroll; 
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: #6805F2 transparent;
+}
+
+.news-display::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.news-display::-webkit-scrollbar-thumb {
+    background: #6805F2;
+    border-radius: 4px;
+}
+
+.news-display::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.news-items {
+    width: 90%;
+}
+
+.news-item {
+    display: block;
+    padding: 1em;
+    border-radius: 25px;
+    margin-bottom: 1.5em;
+}
+
+.news-item:hover {
+    transform: scale(1.1);
+    transition: transform 0.2s ease-in-out;
+    border: 1px solid #6805F2;
+}
+
+.news-item-heading {
+    padding: 0 !important;
+}
+
+.news-item-time {
+    background-color: #140126;
+    color: #6805F2;
+    padding: 0 !important;
+    font-size: 0.75em;
+}
+
+.chart-background {
+    width: 90%;
+    height: 75%;
+    border-radius: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1em;
+}
+
+.coin-chart {
+    max-width: 95% !important;
+    max-height: 95% !important;
+}
+
+@media (max-width: 1024px) {
+    .large-coin-image {
+        max-height: 125px;
+    }
+}
+
+@media (max-width: 768px) {
+
+    * {
+        font-size: 12px;
+    }
+
+    body {
+        overflow-y: scroll;
+    }
+
+    nav {
+        padding: 1em;
+        height: auto;
+        flex-direction: column;
+        gap: 1em;
+    }
+
+    .back-button {
+        text-align: center;
+    }
+
+    form {
+        flex-direction: column;
+        gap: 1em;
+        width: 100%;
+    }
+
+    input[type='text'], input[type='submit']  {
+        font-size: 1em;
+    }
+
+    input[type='text'] {
+        width: 100%;
+    }
+
+    input[type='submit'] {
+        width: 60%;
+    }
+
+    .winners-losers-display {
+        height: auto;
+        flex-direction: column;
+        gap: 1em;
+        padding: 1em;
+    }
+
+    .winners-display, .losers-display {
+        width: 100%;
+    }
+
+    .top-coins-display {
+        height: auto;
+    }
+
+    .top-coins {
+        flex-direction: column;
+    }
+
+    .top-coin {
+        width: auto;
+        padding: 0.5em;
+    }
+
+    .back-button {
+        width: auto;
+    }
+
+    .coin-home-display {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .outer-news-display {
+        max-height: 50vh;
+        order: 4;
+    }
+
+    .coin-image-display, .stats-display, .outer-news-display, .chart-display {
+        padding: 1em 0 1em 0;
+    }
+}

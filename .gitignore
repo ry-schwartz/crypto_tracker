@@ -1,0 +1,4 @@
+v_env/
+db.sqlite3
+manage.py
+.env

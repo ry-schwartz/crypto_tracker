@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="back-button-container">
+    <a href="{% url 'home' %}" class="back-button">Back to Dashboard</a>
+</div>
+<div class="coin-home-display">
+    {% if coin %}
+    <div class="coin-image-display">
+        <img src="{{ coin.image }}" alt="Crypto Coin" class="coin-home-image">
+        <h2>{{ coin.name }}</h2>
+    </div>
+    <div class="stats-display">
+        <h2 class="coin-home-heading">Quick Stats</h2>
+        <div class="stats">
+            <div class="stat">
+                <p>Price</p>
+                <p>${{ coin.price }}</p>
+            </div>
+            <div class="stat">
+                <p>Volume</p>
+                <p>{{ coin.volume }}</p>
+            </div>
+            <div class="stat">
+                <p>30 Day Change</p>
+                <p>{{ coin.percentage_change_30d }}%</p>
+            </div>
+            <div class="stat">
+                <p>30 Day Trend</p>
+                <p>{{ coin.trend|capfirst }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="outer-news-display">
+        <div class="news-display">
+            <h2 class="coin-home-heading">News</h2>
+            <div class="news-items">
+                {% for article in coin.news %}
+                <a href="{{ article.link }}" target="_blank" class="news-item">
+                    <h3 class="news-item-heading">{{ article.title }}...</h3>
+                    <p class="news-item-time">{{ article.time_since }}</p>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="chart-display">
+        <h2 class="coin-home-heading">30 Day Price Chart</h2>
+        <div class="chart-background">
+            <canvas id="coin-chart"></canvas>
+        </div>
+    </div>
+    {% else %}
+        <p>No coin data found. Please search for a valid cryptocurrency.</p>
+    {% endif %}
+</div>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', function() {
+    var ctx = document.getElementById('coin-chart').getContext('2d');
+    var labels = JSON.parse('{{ labels|escapejs }}');
+    var data = JSON.parse('{{ data|escapejs }}');
+
+    function formatDate(dateStr) {
+        var d = new Date(dateStr);
+        var day = d.getDate();
+        var month = d.getMonth() + 1;
+        return (month < 10 ? '0' + month : month) + '/' + (day < 10 ? '0' + day : day);
+    }
+
+    var formattedLabels = labels.map(dateStr => {
+        var parts = dateStr.split('-');
+        var formattedDate = `${parts[1]}/${parts[2]}`;
+        return formattedDate;
+    });
+
+    var coin_chart = new Chart(ctx, {
+        type: 'line', 
+        data: {
+            labels: formattedLabels,
+            datasets: [{
+                label: 'Price',
+                data: data,
+                backgroundColor: 'rgba(104, 5, 242, 0.2)',
+                borderColor: 'rgba(104, 5, 242, 1)', 
+                borderWidth: 1,
+                pointRadius: 0,      
+                pointHoverRadius: 0
+            }]
+        },
+        options: {
+            scales: {
+                x: {
+                    ticks: {
+                        callback: function(value, index, values) {
+                            return formattedLabels[index];
+                        }
+                    }
+                },
+                y: {
+                    beginAtZero: false
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+});
+</script>
+{% endblock %}
