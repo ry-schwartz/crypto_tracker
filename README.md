@@ -46,8 +46,8 @@ pip install Django requests
 1. Clone this repository to your local machine:
 
    ```bash
-   git clone https://github.com/ry-schwartz/cryptocurrency-tracker.git
-   cd cryptocurrency-tracker
+   git clone https://github.com/ry-schwartz/cryptocurrency_tracker.git
+   cd cryptocurrency_tracker
    ```
 2. Ensure all dependencies are installed (as mentioned above).
 
