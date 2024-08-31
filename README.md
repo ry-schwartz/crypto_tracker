@@ -38,7 +38,7 @@ This project requires the following Python packages:
 You can install them using `pip`:
 
 ```bash
-pip install Django requests
+pip install django requests
 ```
 
 ### Setting Up the Project
