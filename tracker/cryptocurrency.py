@@ -85,47 +85,54 @@ def fetch_coin_details(coin_id):
     return coin_details
 
 def fetch_coin_news(coin_id):
-    url = 'https://newsapi.org/v2/everything'
-    api_key = os.getenv('NEWS_API_KEY')
+    url = 'http://api.mediastack.com/v1/news'
+    api_key = os.getenv('NEWS_API_KEY') 
     params = {
-        'q': coin_id.lower(),
-        'apiKey': api_key,
-        'pageSize': 10,
-        'language': 'en',
-        'sortBy': 'publishedAt'
+        'access_key': api_key,
+        'keywords': coin_id.lower(),
+        'languages': 'en',
+        'sort': 'published_desc',
+        'limit': 10
     }
 
-    response = requests.get(url, params = params)
+    response = requests.get(url, params=params)
 
     if response.status_code == 200:
         news_data = response.json()
 
         news_articles = []
 
-        for article in news_data.get('articles', []):
+        for article in news_data.get('data', []):
             news_articles.append({
                 'title': article['title'][:40],
                 'link': article['url'],
-                'time_since': time_since_posting(article['publishedAt'])
+                'time_since': time_since_posting(article['published_at'])
             })
     else:
-        print('Error fetching news from NewsAPI')
+        print('Error fetching news from Mediastack API:', response.text)
         news_articles = []
-    
+
     return news_articles
 
-def time_since_posting(published_at):
-    published_time = datetime.strptime(published_at, '%Y-%m-%dT%H:%M:%SZ')
-    time_difference = datetime.utcnow() - published_time
-
-    if time_difference < timedelta(minutes = 1):
-        return 'Just Now'
-    elif time_difference < timedelta(hours = 1):
-        return f'{int(time_difference.total_seconds() // 60)} minutes ago'
-    elif time_difference < timedelta(days=1):
-        return f'{int(time_difference.total_seconds() // 3600)} hours ago'
-    else:
-        return f'{int(time_difference.total_seconds() // 86400)} days ago'
+def time_since_posting(published_date):
+    # Converts published date to the time since posting format
+    try:
+        # Adjust the format string to match Mediastack's date format, including the timezone offset
+        published_time = datetime.fromisoformat(published_date)
+        time_diff = datetime.now(published_time.tzinfo) - published_time
+        if time_diff.days > 0 and time_diff.days == 1:
+            return f"{time_diff.days} day ago"
+        elif time_diff.days > 1:
+            return f"{time_diff.days} days ago"
+        else:
+            hours = time_diff.seconds // 3600
+            if hours > 0:
+                return f"{hours} hours ago"
+            else:
+                return f"{time_diff.seconds // 60} minutes ago"
+    except ValueError:
+        # Handle any parsing errors
+        print(published_date)
 
 def fetch_coin_chart_data(coin_id):
     url = f'https://api.coingecko.com/api/v3/coins/{coin_id}/market_chart'
