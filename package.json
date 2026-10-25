@@ -1,0 +1,13 @@
+{
+  "name": "crypto-hotspot",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "watch": "tailwindcss -i ./tracker/static/css/input.css -o ./tracker/static/css/tailwind.css --watch",
+    "build": "tailwindcss -i ./tracker/static/css/input.css -o ./tracker/static/css/tailwind.css --minify"
+  },
+  "dependencies": {
+    "@tailwindcss/cli": "4.3.3",
+    "tailwindcss": "4.3.3"
+  }
+}

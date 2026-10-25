@@ -1,113 +1,401 @@
 {% extends 'base.html' %}
-{% load static %}
+
+{% block title %}{{ coin.name|default:"Coin Details" }} | Crypto Hotspot{% endblock %}
 
 {% block content %}
-<div class="back-button-container">
-    <a href="{% url 'home' %}" class="back-button">Back to Dashboard</a>
+<div class="mb-4">
+    <a
+        href="{% url 'home' %}"
+        class="inline-flex items-center gap-2 rounded text-sm text-[#A970FF] transition-colors hover:text-[#C7A0FF] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#A970FF]"
+    >
+        <span aria-hidden="true">&larr;</span>
+        Back to Dashboard
+    </a>
 </div>
-<div class="coin-home-display">
-    {% if coin %}
-    <div class="coin-image-display">
-        <img src="{{ coin.image }}" alt="Crypto Coin" class="coin-home-image">
-        <h2>{{ coin.name }}</h2>
-    </div>
-    <div class="stats-display">
-        <h2 class="coin-home-heading">Quick Stats</h2>
-        <div class="stats">
-            <div class="stat">
-                <p>Price</p>
-                <p>${{ coin.price }}</p>
-            </div>
-            <div class="stat">
-                <p>Volume</p>
-                <p>{{ coin.volume }}</p>
-            </div>
-            <div class="stat">
-                <p>30 Day Change</p>
-                <p>{{ coin.percentage_change_30d }}%</p>
-            </div>
-            <div class="stat">
-                <p>30 Day Trend</p>
-                <p>{{ coin.trend|capfirst }}</p>
-            </div>
-        </div>
-    </div>
-    <div class="outer-news-display">
-        <div class="news-display">
-            <h2 class="coin-home-heading">News</h2>
-            <div class="news-items">
-                {% for article in coin.news %}
-                <a href="{{ article.link }}" target="_blank" class="news-item">
-                    <h3 class="news-item-heading">{{ article.title }}...</h3>
-                    <p class="news-item-time">{{ article.time_since }}</p>
-                </a>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-    <div class="chart-display">
-        <h2 class="coin-home-heading">30 Day Price Chart</h2>
-        <div class="chart-background">
-            <canvas id="coin-chart"></canvas>
-        </div>
-    </div>
-    {% else %}
-        <p>No coin data found. Please search for a valid cryptocurrency.</p>
-    {% endif %}
-</div>
-<script type="text/javascript">
-document.addEventListener('DOMContentLoaded', function() {
-    var ctx = document.getElementById('coin-chart').getContext('2d');
-    var labels = JSON.parse('{{ labels|escapejs }}');
-    var data = JSON.parse('{{ data|escapejs }}');
 
-    function formatDate(dateStr) {
-        var d = new Date(dateStr);
-        var day = d.getDate();
-        var month = d.getMonth() + 1;
-        return (month < 10 ? '0' + month : month) + '/' + (day < 10 ? '0' + day : day);
+{% if coin_notice %}
+    <p
+        role="status"
+        class="mb-4 rounded-2xl bg-[#1B0140] px-5 py-3 text-sm text-[#D8C9ED]"
+    >
+        {{ coin_notice }}
+    </p>
+{% endif %}
+
+<div class="grid gap-4 lg:h-[calc(100dvh-11rem)] lg:min-h-[31rem] lg:grid-cols-[minmax(0,3fr)_minmax(0,7fr)] lg:grid-rows-[10rem_minmax(0,1fr)]">
+    <!-- Coin identity -->
+    <section
+        aria-labelledby="coin-heading"
+        class="flex min-w-0 flex-col items-center justify-center rounded-3xl bg-[#1B0140] px-5 py-5"
+    >
+        {% if coin.image %}
+            <img
+                src="{{ coin.image }}"
+                alt=""
+                width="72"
+                height="72"
+                class="mb-3 size-18 object-contain"
+            >
+        {% endif %}
+
+        <h1
+            id="coin-heading"
+            class="break-words text-center text-2xl font-medium text-[#A970FF]"
+        >
+            {{ coin.name|default:"Coin unavailable" }}
+        </h1>
+    </section>
+
+    <!-- Statistics -->
+    <section
+        aria-labelledby="stats-heading"
+        class="flex min-w-0 flex-col justify-center rounded-3xl bg-[#1B0140] px-5 py-5 sm:px-6"
+    >
+        <h2
+            id="stats-heading"
+            class="mb-6 text-center text-xl font-medium uppercase tracking-wide text-[#A970FF]"
+        >
+            Quick Stats
+        </h2>
+
+        <dl class="grid grid-cols-2 gap-x-4 gap-y-6 text-center sm:grid-cols-4">
+            <div class="flex min-w-0 flex-col">
+                <dt class="order-2 mt-2 text-xs text-[#B7A3CF]">
+                    Price
+                </dt>
+                <dd class="order-1 break-words text-xl font-medium tabular-nums text-[#C7A0FF] xl:text-2xl">
+                    {% if coin and coin.price is not None %}
+                        {% if coin.price == 0 %}
+                            $0.00
+                        {% elif coin.price >= 0.01 %}
+                            ${{ coin.price|floatformat:"2g" }}
+                        {% elif coin.price >= 0.0001 %}
+                            ${{ coin.price|floatformat:6 }}
+                        {% elif coin.price >= 0.00000001 %}
+                            ${{ coin.price|floatformat:8 }}
+                        {% else %}
+                            &lt; $0.00000001
+                        {% endif %}
+                    {% else %}
+                        —
+                    {% endif %}
+                </dd>
+            </div>
+
+            <div class="flex min-w-0 flex-col">
+                <dt class="order-2 mt-2 text-xs text-[#B7A3CF]">
+                    24 Hour Volume
+                </dt>
+                <dd class="order-1 break-words text-xl font-medium tabular-nums text-[#C7A0FF] xl:text-2xl">
+                    {% if coin.volume and coin.volume != 'N/A' %}
+                        ${{ coin.volume }}
+                    {% else %}
+                        —
+                    {% endif %}
+                </dd>
+            </div>
+
+            <div class="flex min-w-0 flex-col">
+                <dt class="order-2 mt-2 text-xs text-[#B7A3CF]">
+                    30 Day Change
+                </dt>
+                <dd class="order-1 text-xl font-medium tabular-nums xl:text-2xl {% if coin.trend == 'up' %}text-[#66E5A5]{% elif coin.trend == 'down' %}text-[#FF8C9F]{% else %}text-[#D8C9ED]{% endif %}">
+                    {% if coin and coin.percentage_change_30d is not None %}
+                        {% if coin.trend == 'up' %}+{% endif %}{{ coin.percentage_change_30d|floatformat:2 }}%
+                    {% else %}
+                        —
+                    {% endif %}
+                </dd>
+            </div>
+
+            <div class="flex min-w-0 flex-col">
+                <dt class="order-2 mt-2 text-xs text-[#B7A3CF]">
+                    30 Day Trend
+                </dt>
+                <dd class="order-1 text-xl font-medium xl:text-2xl {% if coin.trend == 'up' %}text-[#66E5A5]{% elif coin.trend == 'down' %}text-[#FF8C9F]{% else %}text-[#D8C9ED]{% endif %}">
+                    {% if coin and coin.trend != 'unknown' %}
+                        {{ coin.trend|capfirst }}
+                    {% else %}
+                        —
+                    {% endif %}
+                </dd>
+            </div>
+        </dl>
+    </section>
+
+    <!-- News -->
+    <section
+        aria-labelledby="news-heading"
+        class="order-4 flex h-96 min-h-0 min-w-0 flex-col rounded-3xl bg-[#1B0140] p-5 lg:order-none lg:h-auto"
+    >
+        <h2
+            id="news-heading"
+            class="mb-5 shrink-0 text-center text-xl font-medium uppercase tracking-wide text-[#A970FF]"
+        >
+            News
+        </h2>
+
+        {% if news_notice %}
+            <p
+                role="status"
+                class="mb-3 text-center text-sm text-[#CDBDE5]"
+            >
+                {{ news_notice }}
+            </p>
+        {% endif %}
+
+        <div
+            tabindex="0"
+            role="region"
+            aria-label="Coin news articles"
+            class="min-h-0 flex-1 space-y-3 overflow-y-auto rounded-xl pr-2 [scrollbar-width:thin] [scrollbar-color:#6805F2_transparent] focus-visible:outline-2 focus-visible:outline-[#A970FF]"
+        >
+            {% for article in coin.news %}
+                <a
+                    href="{{ article.link }}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="group block rounded-2xl bg-[#140126] p-4 transition-colors hover:bg-[#210647] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[#A970FF]"
+                >
+                    <h3 class="line-clamp-2 text-sm font-normal leading-relaxed transition-colors group-hover:text-[#C7A0FF]">
+                        {{ article.title }}
+                    </h3>
+                    <p class="mt-2 text-xs text-[#A970FF]">
+                        {{ article.time_since }}
+                    </p>
+                </a>
+            {% empty %}
+                {% if not news_notice %}
+                    <p class="py-6 text-center text-sm text-[#CDBDE5]">
+                        No current news available.
+                    </p>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Chart -->
+    <section
+        aria-labelledby="chart-heading"
+        class="order-3 flex h-96 min-h-0 min-w-0 flex-col rounded-3xl bg-[#1B0140] p-5 lg:order-none lg:h-auto"
+    >
+        <h2
+            id="chart-heading"
+            class="mb-5 shrink-0 text-center text-xl font-medium uppercase tracking-wide text-[#A970FF]"
+        >
+            30 Day Price Chart
+        </h2>
+
+        {% if chart_notice %}
+            <p
+                role="status"
+                class="mb-3 text-center text-sm text-[#CDBDE5]"
+            >
+                {{ chart_notice }}
+            </p>
+        {% endif %}
+
+        {% if has_chart_data %}
+            <div
+                id="chart-container"
+                class="relative min-h-0 min-w-0 flex-1"
+            >
+                <canvas
+                    id="coin-chart"
+                    role="img"
+                    aria-label="{{ coin.name }} price in US dollars over the last 30 days"
+                >
+                    30-day price chart. Current price is listed in Quick Stats.
+                </canvas>
+            </div>
+
+            <p
+                id="chart-error"
+                role="status"
+                class="hidden py-6 text-center text-sm text-[#CDBDE5]"
+            >
+                Unable to display the chart. Please refresh the page.
+            </p>
+        {% elif not chart_notice %}
+            <p class="flex flex-1 items-center justify-center text-sm text-[#CDBDE5]">
+                Chart data unavailable.
+            </p>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% if has_chart_data %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const canvas = document.getElementById('coin-chart');
+    if (!canvas) return;
+
+    function showChartError() {
+        document.getElementById('chart-container').classList.add('hidden');
+        document.getElementById('chart-error').classList.remove('hidden');
     }
 
-    var formattedLabels = labels.map(dateStr => {
-        var parts = dateStr.split('-');
-        var formattedDate = `${parts[1]}/${parts[2]}`;
-        return formattedDate;
-    });
+    if (typeof Chart === 'undefined') {
+        showChartError();
+        return;
+    }
 
-    var coin_chart = new Chart(ctx, {
-        type: 'line', 
-        data: {
-            labels: formattedLabels,
-            datasets: [{
-                label: 'Price',
-                data: data,
-                backgroundColor: 'rgba(104, 5, 242, 0.2)',
-                borderColor: 'rgba(104, 5, 242, 1)', 
-                borderWidth: 1,
-                pointRadius: 0,      
-                pointHoverRadius: 0
-            }]
-        },
-        options: {
-            scales: {
-                x: {
-                    ticks: {
-                        callback: function(value, index, values) {
-                            return formattedLabels[index];
+    try {
+        const labels = JSON.parse('{{ labels|escapejs }}');
+        const prices = JSON.parse('{{ data|escapejs }}');
+
+        if (
+            !Array.isArray(labels) ||
+            !Array.isArray(prices) ||
+            prices.length === 0 ||
+            labels.length !== prices.length ||
+            !labels.every(label => typeof label === 'string') ||
+            !prices.every(price => typeof price === 'number' && Number.isFinite(price))
+        ) {
+            showChartError();
+            return;
+        }
+
+        const fontFamily = "'Poppins', sans-serif";
+        const largestPrice = Math.max(...prices.map(Math.abs));
+        const axisFormatter = new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: largestPrice >= 1 ? 2 : 8
+        });
+
+        function formatPrice(value) {
+            if (value > 0 && value < 0.00000001) {
+                return '$' + value.toExponential(2);
+            }
+
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: Math.abs(value) >= 0.01 ? 2 : 8
+            }).format(value);
+        }
+
+        new Chart(canvas, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Price',
+                    data: prices,
+                    borderColor: '#A970FF',
+                    backgroundColor: 'rgba(169, 112, 255, 0.07)',
+                    borderWidth: 2,
+                    fill: 'origin',
+                    tension: 0,
+                    pointRadius: 0,
+                    pointHoverRadius: 4,
+                    pointHoverBackgroundColor: '#C7A0FF',
+                    pointHoverBorderColor: '#140126',
+                    pointHoverBorderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false
+                },
+                scales: {
+                    x: {
+                        border: {
+                            display: false
+                        },
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: '#CDBDE5',
+                            font: {
+                                family: fontFamily,
+                                size: 11
+                            },
+                            maxTicksLimit: 6,
+                            maxRotation: 0,
+                            autoSkip: true,
+                            padding: 10,
+                            callback: function (value) {
+                                const date = this.getLabelForValue(value);
+                                const parts = date.split('-');
+                                return `${parts[1]}/${parts[2]}`;
+                            }
+                        }
+                    },
+                    y: {
+                        beginAtZero: false,
+                        border: {
+                            display: false
+                        },
+                        grid: {
+                            color: 'rgba(169, 112, 255, 0.10)',
+                            drawTicks: false
+                        },
+                        ticks: {
+                            color: '#CDBDE5',
+                            font: {
+                                family: fontFamily,
+                                size: 11
+                            },
+                            maxTicksLimit: 5,
+                            padding: 10,
+                            callback: function (value) {
+                                if (largestPrice > 0 && largestPrice < 0.00000001) {
+                                    return '$' + Number(value).toExponential(1);
+                                }
+                                return axisFormatter.format(value);
+                            }
                         }
                     }
                 },
-                y: {
-                    beginAtZero: false
-                }
-            },
-            plugins: {
-                legend: {
-                    display: false
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: '#140126',
+                        titleColor: '#CDBDE5',
+                        bodyColor: '#F5F0FF',
+                        borderColor: 'rgba(169, 112, 255, 0.35)',
+                        borderWidth: 1,
+                        cornerRadius: 12,
+                        padding: 12,
+                        displayColors: false,
+                        titleFont: {
+                            family: fontFamily,
+                            size: 11,
+                            weight: 'normal'
+                        },
+                        bodyFont: {
+                            family: fontFamily,
+                            size: 13
+                        },
+                        callbacks: {
+                            label: function (context) {
+                                return formatPrice(context.parsed.y);
+                            }
+                        }
+                    }
                 }
             }
-        }
-    });
+        });
+    } catch (error) {
+        console.error('Chart rendering failed:', error);
+        showChartError();
+    }
 });
 </script>
+{% endif %}
 {% endblock %}

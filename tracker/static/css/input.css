@@ -1,0 +1,13 @@
+@import "tailwindcss" source(none);
+
+@source "../../templates";
+
+@layer base {
+    html {
+        color-scheme: dark;
+    }
+
+    body {
+        margin: 0;
+    }
+}

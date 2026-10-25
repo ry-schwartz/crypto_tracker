@@ -4,25 +4,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crypto Hotspot</title>
-    <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
+    <title>{% block title %}Crypto Hotspot{% endblock %}</title>
+
+    <link
+        rel="icon"
+        href="{% static 'favicon.ico' %}"
+        type="image/x-icon"
+    >
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap"
+        rel="stylesheet"
+    >
+    <link
+        rel="stylesheet"
+        href="{% static 'css/tailwind.css' %}"
+    >
+
+    {% block extra_head %}{% endblock %}
+
 </head>
-<body>
-    <header>
-        <nav>
-            <h1>Crypto <br> Hotspot</h1>
-            <form action="{% url 'coin_view' %}" method="get">
-                <input type="text" name="query" placeholder="Search crypto by name...">
-                <input type="submit" value="Search">
+
+<body class="min-h-screen bg-[#140126] font-['Poppins',sans-serif] font-normal text-[#F5F0FF] antialiased selection:bg-[#6805F2] selection:text-white">
+    <a
+        href="#main-content"
+        class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-xl focus:bg-[#6805F2] focus:px-5 focus:py-2 focus:text-white"
+    >
+        Skip to content
+    </a>
+
+    <header class="mx-auto w-[94%]">
+        <nav
+            aria-label="Main navigation"
+            class="flex flex-col gap-4 border-b border-[#6805F2]/60 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-8 sm:py-5"
+        >
+            <a
+                href="{% url 'home' %}"
+                aria-label="Crypto Hotspot home"
+                class="w-fit shrink-0 rounded-sm text-base font-medium leading-relaxed text-[#A970FF] transition-colors hover:text-[#C7A0FF] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#A970FF]"
+            >
+                Crypto<br>
+                Hotspot
+            </a>
+
+            <form
+                action="{% url 'coin_view' %}"
+                method="get"
+                role="search"
+                class="flex w-full items-center gap-2 rounded-2xl border border-[#A970FF]/20 bg-[#1B0140] p-1.5 transition-colors focus-within:border-[#A970FF]/70 focus-within:ring-2 focus-within:ring-[#A970FF]/10 sm:w-3/4 lg:w-2/3"
+            >
+                <label for="coin-search" class="sr-only">
+                    Search for crypto coins by name
+                </label>
+
+                <svg
+                    aria-hidden="true"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.75"
+                    stroke-linecap="round"
+                    class="ml-2 size-5 shrink-0 text-[#A970FF]"
+                >
+                    <circle cx="10.5" cy="10.5" r="6.5"></circle>
+                    <path d="m16 16 4.5 4.5"></path>
+                </svg>
+
+                <input
+                    id="coin-search"
+                    type="search"
+                    name="query"
+                    placeholder="Search for crypto coins by name..."
+                    required
+                    autocomplete="off"
+                    spellcheck="false"
+                    class="h-9 min-w-0 flex-1 rounded-lg border-0 bg-transparent px-1 text-sm text-[#F5F0FF] placeholder:text-[#B7A3CF] focus:outline-none"
+                >
+
+                <button
+                    type="submit"
+                    class="h-9 shrink-0 cursor-pointer rounded-xl bg-[#6805F2] px-4 text-sm font-medium text-white transition-colors hover:bg-[#7C24FF] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C7A0FF] sm:px-7"
+                >
+                    Search
+                </button>
             </form>
         </nav>
     </header>
-    {% block content %}
-    {% endblock %}
+
+    <main
+        id="main-content"
+        class="mx-auto w-[94%] py-5"
+    >
+        {% if messages %}
+            <div class="mb-4 space-y-2" role="status">
+                {% for message in messages %}
+                    <p class="rounded-2xl bg-[#1B0140] px-5 py-3 text-sm text-[#D8C9ED]">
+                        {{ message }}
+                    </p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    {% block scripts %}{% endblock %}
 </body>
 </html>

@@ -1,3 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
 v_env/
-db.sqlite3
+
+# Local configuration and secrets
 .env
+.env.*
+!.env.example
+
+# Local database
+db.sqlite3
+db.sqlite3-*
+
+# Collected Django static files
+/staticfiles/
+
+# Node dependencies and logs
+node_modules/
+npm-debug.log*
+
+# Operating system files
+.DS_Store
+Thumbs.db

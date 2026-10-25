@@ -1,136 +1,202 @@
-# Cryptocurrency Tracker
+# Crypto Hotspot
 
-A Django-based web application for tracking cryptocurrency prices, 24-hour winners and losers, and other key metrics. This tool allows users to search for specific cryptocurrencies, view detailed statistics, analyze price trends, and stay updated with the latest news.
+A Django cryptocurrency dashboard built for my personal research workflow. It brings market movers, coin statistics, price history, and related news into a single interface.
 
-![Home Page Screenshot](screenshot_1.png)
-![Coin Detail Page Screenshot](screenshot_2.png)
+The project demonstrates third-party API integration, server-side data processing, caching, and a responsive Tailwind CSS interface.
+
+![Market dashboard](screenshot_1.png)
+![Coin detail dashboard](screenshot_2.png)
 
 ## Features
 
-- **24-Hour Winners and Losers:** Display the top gainers and losers in the cryptocurrency market over the last 24 hours.
-- **Top Coins:** View the most popular cryptocurrencies.
-- **Search Functionality:** Search for any cryptocurrency by name or symbol and view detailed statistics.
-- **Trend Analysis:** View 30-day price trends with an interactive chart.
-- **News Feed:** Get the latest news related to the selected cryptocurrency.
-- **Responsive Design:** The application is fully responsive, providing an optimal viewing experience across all devices.
+- **Market movers:** Six gainers and six losers, where available, ranked by 24-hour percentage change within the top 100 coins by market capitalization.
+- **Top coins:** Prices and percentage changes for the five largest coins by market capitalization.
+- **Coin search:** Search by name or symbol within the cached top-100 market list, or use an exact CoinGecko ID for other coins.
+- **Quick statistics:** Current price, trading volume, and 30-day percentage change and direction.
+- **Price history:** Interactive 30-day charts powered by Chart.js.
+- **Related news:** Articles for the selected coin, with publication age and links to the source.
+- **Responsive layout:** Dashboard and coin views adapt to desktop and narrow screens.
+- **API failure handling:** Request timeouts, caching, rate-limit cooldowns, and notices when data is stale or unavailable.
 
-## APIs Used
+## Technology
 
-This project uses the following APIs to fetch data:
+- Python and Django 5.2
+- Tailwind CSS 4
+- Chart.js
+- Requests
+- SQLite for Django's built-in database functionality
+- WhiteNoise and Gunicorn for deployment support
 
-- **[CoinGecko API](https://www.coingecko.com/en/api):** Provides data on cryptocurrency prices, market trends, and other relevant metrics.
-- **[News API](https://newsapi.org/):** Supplies the latest news articles.
+Market and news data come from external APIs rather than a local cryptocurrency database.
 
-Make sure to obtain API keys (if required) and set them up in your environment variables as part of the installation or deployment process.
+## Data Sources
 
-## Installation
+- [CoinGecko](https://www.coingecko.com/en/api): Market data, coin details, and price history.
+- [Mediastack](https://mediastack.com/): Related news articles.
 
-### Prerequisites
+A Mediastack API key is required for news. A CoinGecko Demo API key can optionally be supplied through the environment.
 
-Ensure you have Python 3.x installed on your system. You can download it from [python.org](https://www.python.org/).
+## Local Setup
 
-### Required Python Packages
+The refresh was tested with Python 3.11 and Node.js 20. Node.js and npm are used to compile Tailwind CSS.
 
-This project requires the following Python packages:
-- `Django`
-- `requests`
+The following commands use Windows Command Prompt.
 
-You can install them using `pip`:
+### 1. Clone the repository
 
-```bash
-pip install django requests
+```bat
+git clone https://github.com/ry-schwartz/crypto_tracker.git
+cd crypto_tracker
 ```
 
-### Setting Up the Project
+### 2. Create a virtual environment and install dependencies
 
-1. Clone this repository to your local machine:
+```bat
+python -m venv v_env
+v_env\Scripts\activate
+python -m pip install -r requirements.txt
+```
 
-   ```bash
-   git clone https://github.com/ry-schwartz/cryptocurrency_tracker.git
-   cd cryptocurrency_tracker
-   ```
-2. Ensure all dependencies are installed (as mentioned above).
+On macOS or Linux, activate the environment with:
 
-3. Run database migrations:
+```bash
+source v_env/bin/activate
+```
 
-    ```bash
-   python manage.py migrate
-   ```
+### 3. Configure the environment
 
-4. Collect static files:
+Create a file named `.env` in the project root, beside `manage.py`:
 
-    ```bash
-   python manage.py collectstatic
-   ```
+```dotenv
+DJANGO_SECRET_KEY=replace-with-your-generated-secret-key
+DJANGO_DEBUG=true
+DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1
 
-5. Set up environment variables for the API key(s):
+NEWS_API_KEY=
+COINGECKO_API_KEY=
+```
 
-    ```bash
-   export CRYPTONEWS_API_KEY='your-cryptonews-api-key'
-   ```
+Generate a Django secret key with:
 
-### Usage
+```bat
+python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
+```
 
-To run the application locally, navigate to the project directory and execute the following command:
+Copy the generated value into `DJANGO_SECRET_KEY`.
 
-   ```bash
-   python manage.py runserver
-   ```
+Add your Mediastack key to `NEWS_API_KEY` to enable news. Leave `COINGECKO_API_KEY` blank to use the public CoinGecko endpoint without a key, or supply a Demo API key.
 
-1. Open your web browser and go to `http://127.0.0.1:8000/`.
-2. Click on any cryptocurrency to view its detailed stats, 30-day price chart, and related news.
-3. Use the search bar on the home page to find a cryptocurrency by name or symbol.
+The `.env` file is ignored by Git. Never commit real credentials.
 
-### Deployment on Heroku
+### 4. Build the styles
 
-This project is configured to be deployed on Heroku. Follow these steps:
+```bat
+npm ci
+npm run build
+```
 
-1. Ensure you have the Heroku CLI installed.
+The compiled stylesheet is included in the repository. Rebuild it whenever templates or Tailwind input styles change.
 
-2. Log in to your Heroku account:
+### 5. Initialize Django and start the application
 
-    ```bash
-   heroku login
-   ```
+```bat
+python manage.py migrate
+python manage.py check
+python manage.py runserver
+```
 
-3. Create a new Heroku application:
+Open http://127.0.0.1:8000/.
 
-    ```bash
-   heroku create cryptocurrency_tracker
-   ```
+## Development
 
-4. Set up the environment variables required for the project:
+Run Django in one terminal:
 
-    ```bash
-   heroku config:set SECRET_KEY='your-secret-key'
-   heroku config:set DEBUG=0
-   heroku config:set CRYPTONEWS_API_KEY='your-cryptonews-api-key'
-   ```
+```bat
+python manage.py runserver
+```
 
-5. Push the code to Heroku:
+Run the Tailwind watcher in another terminal:
 
-    ```bash
-   git push heroku main
-   ```
+```bat
+npm run watch
+```
 
-6. Run the database migrations on Heroku:
+Tailwind reads templates from `tracker/templates` and compiles:
 
-    ```bash
-   heroku run python manage.py migrate
-   ```
+- Input: `tracker/static/css/input.css`
+- Output: `tracker/static/css/tailwind.css`
 
-7. Open the application in your web browser:
+Before committing styling changes, generate the minified stylesheet:
 
-    ```bash
-   heroku open
-   ```
+```bat
+npm run build
+```
 
-### Troubleshooting
+Commit both the input and compiled CSS, along with `package.json` and `package-lock.json`.
 
-- If the application fails to fetch data, ensure you have an active internet connection.
-- If no data is displayed for a cryptocurrency, verify that the cryptocurrency exists and that its API data is available.
-- On Heroku, make sure that all environment variables are correctly set.
+## Usage
 
-### Contributing
+Select a coin from the dashboard or search for a coin such as `Bitcoin`, `BTC`, or `bitcoin`.
 
-Contributions are welcome! Please fork the repository and submit a pull request if you wish to improve the application or fix bugs.
+Name and symbol matching uses the top-100 market list. For coins outside that list, use the exact CoinGecko ID. Symbols can be shared by multiple coins; ambiguous matches require a more specific search.
+
+The coin page displays quick statistics, a 30-day price chart, and related news. News links open the original article in a new tab.
+
+## API Limits and Data Availability
+
+This project uses free API access for demonstration. It does not stream prices or automatically refresh the page.
+
+Responses are cached to reduce repeated requests. When a provider fails or rate-limits requests, the application can display previously cached data with a notice. Data that has not been cached may remain unavailable until the provider responds again.
+
+The default Django cache is local to each application process. Restarting the server clears that process's cache, and separate workers do not share cached responses.
+
+News availability depends on the selected coin, provider coverage, and API plan. Articles may be older than the displayed market data. The news panel distinguishes an empty result from a fetch error.
+
+A higher-limit API plan can support heavier usage. Paid CoinGecko plans may require changes to the API endpoint and authentication; the current optional key configuration is for the Demo API.
+
+## Validation
+
+To check the Python environment and Django configuration:
+
+```bat
+python -m pip check
+python manage.py check
+```
+
+Manual checks performed during the refresh included:
+
+- Dashboard and coin-page loading.
+- Name and symbol searches.
+- Chart and news rendering.
+- Rate-limit and unavailable-data behavior.
+- Responsive layouts at narrow browser widths.
+
+These checks are not a comprehensive automated test suite.
+
+## Deployment
+
+The repository includes a Gunicorn entry point and WhiteNoise middleware. The previous Heroku deployment is obsolete; these setup instructions do not establish a current hosted deployment.
+
+For a new deployment:
+
+- Set `DJANGO_DEBUG=false`.
+- Set a private `DJANGO_SECRET_KEY`.
+- Set `DJANGO_ALLOWED_HOSTS` to the deployment hostname.
+- Configure API credentials through the hosting environment.
+- Build Tailwind CSS before collecting static files.
+- Run database migrations and collect static files.
+- Configure HTTPS and review Django's deployment checks.
+
+```bash
+python manage.py migrate
+python manage.py collectstatic --noinput
+python manage.py check --deploy
+```
+
+On a compatible Linux host, the application entry point is:
+
+```bash
+gunicorn crypto_tracker.wsgi:application
+```
+
+Address deployment-check warnings for the chosen hosting environment before making the application public.

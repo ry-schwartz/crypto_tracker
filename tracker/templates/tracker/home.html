@@ -1,40 +1,209 @@
 {% extends 'base.html' %}
-{% load static %}
+
+{% block title %}Market Overview | Crypto Hotspot{% endblock %}
 
 {% block content %}
-<div class="winners-losers-display">
-    <div class="winners-display">
-        <h2 class="winner-loser-heading">24H Winners</h2>
-        {% for coin in winners %}
-        <a href="{% url 'coin_view' %}?query={{ coin.id|urlencode }}" class="winner-loser-coin">
-            <img src="{{ coin.image }}" alt="Crypto Coin" class="small-coin-image">
-            <p class="winner-loser-second-cell">{{ coin.name }}</p>
-            <p class="winner-loser-third-cell">{{ coin.percentage_change_24h }}%</p>
-            <img src="{% static 'images/up-arrow.png' %}" alt="Up Arrow" class="up-down-arrow">
-        </a>
-        {% endfor %}
-    </div>
-    <div class="losers-display">
-        <h2 class="winner-loser-heading">24H Losers</h2>
-        {% for coin in losers %}
-        <a href="{% url 'coin_view' %}?query={{ coin.id|urlencode }}" class="winner-loser-coin">
-            <img src="{{ coin.image }}" alt="Crypto Coin" class="small-coin-image">
-            <p class="winner-loser-second-cell">{{ coin.name }}</p>
-            <p class="winner-loser-third-cell">{{ coin.percentage_change_24h }}%</p>
-            <img src="{% static 'images/down-arrow.png' %}" alt="Down Arrow" class="up-down-arrow down-arrow">
-        </a>
-        {% endfor %}
-    </div>
-</div>
-<div class="top-coins-display">
-    <h2 class="top-coins-heading">Top Coins</h2>
-    <div class="top-coins">
-        {% for coin in popular %}
-        <a href="{% url 'coin_view' %}?query={{ coin.id|urlencode }}" class="top-coin">
-            <img src="{{ coin.image }}" alt="Crypto Coin" class="large-coin-image">
-            <h3 class="top-coin-name">{{ coin.name }}</h3>
-        </a>
-        {% endfor %}
-    </div>
+<div class="space-y-8 lg:space-y-16 lg:pt-3">
+    <section aria-labelledby="market-heading">
+        <h1
+            id="market-heading"
+            class="mb-4 text-center text-2xl font-medium uppercase tracking-wide text-[#A970FF]"
+        >
+            Market Movers
+        </h1>
+
+        {% if market_notice %}
+            <p
+                role="status"
+                class="mb-4 rounded-2xl bg-[#1B0140] px-5 py-3 text-sm text-[#D8C9ED]"
+            >
+                {{ market_notice }}
+            </p>
+        {% endif %}
+
+        <div class="grid gap-5 lg:grid-cols-2 lg:gap-6">
+            <!-- Gainers -->
+            <section
+                aria-labelledby="gainers-heading"
+                class="min-w-0 rounded-3xl bg-[#1B0140] p-4 sm:p-5"
+            >
+                <h2
+                    id="gainers-heading"
+                    class="mb-4 text-center text-xl font-medium uppercase tracking-wide text-[#A970FF]"
+                >
+                    Top 24 Hour Gainers
+                </h2>
+
+                <div class="mx-auto grid max-w-[43rem] grid-cols-1 justify-items-center gap-x-10 gap-y-2 sm:grid-flow-col sm:grid-cols-2 sm:grid-rows-3 lg:grid-flow-row lg:grid-cols-1 lg:grid-rows-none xl:grid-flow-col xl:grid-cols-2 xl:grid-rows-3 xl:gap-x-12">
+                    {% for coin in winners %}
+                        <a
+                            href="{% url 'coin_view' %}?query={{ coin.id|urlencode }}"
+                            class="group grid w-full max-w-[20rem] min-w-0 grid-cols-[2.25rem_minmax(0,1fr)_auto] items-center gap-3 rounded-2xl px-2 py-3 transition-colors hover:bg-white/[0.03] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A970FF]"
+                        >
+                            <span class="flex size-9 items-center justify-center">
+                                {% if coin.image %}
+                                    <img
+                                        src="{{ coin.image }}"
+                                        alt=""
+                                        width="32"
+                                        height="32"
+                                        class="size-8 object-contain"
+                                    >
+                                {% endif %}
+                            </span>
+
+                            <h3
+                                title="{{ coin.name }}"
+                                class="min-w-0 truncate text-sm font-normal transition-colors group-hover:text-[#C7A0FF]"
+                            >
+                                {{ coin.name }}
+                            </h3>
+
+                            <span class="whitespace-nowrap text-right text-base font-medium tabular-nums text-[#66E5A5]">
+                                +{{ coin.percentage_change_24h|floatformat:2 }}%
+                            </span>
+                        </a>
+                    {% empty %}
+                        <p class="col-span-full row-span-full py-8 text-center text-sm text-[#CDBDE5]">
+                            {% if market_notice %}
+                                Gainer data unavailable.
+                            {% else %}
+                                No positive movers available.
+                            {% endif %}
+                        </p>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <!-- Losers -->
+            <section
+                aria-labelledby="losers-heading"
+                class="min-w-0 rounded-3xl bg-[#1B0140] p-4 sm:p-5"
+            >
+                <h2
+                    id="losers-heading"
+                    class="mb-4 text-center text-xl font-medium uppercase tracking-wide text-[#A970FF]"
+                >
+                    Top 24 Hour Losers
+                </h2>
+
+                <div class="mx-auto grid max-w-[43rem] grid-cols-1 justify-items-center gap-x-10 gap-y-2 sm:grid-flow-col sm:grid-cols-2 sm:grid-rows-3 lg:grid-flow-row lg:grid-cols-1 lg:grid-rows-none xl:grid-flow-col xl:grid-cols-2 xl:grid-rows-3 xl:gap-x-12">
+                    {% for coin in losers %}
+                        <a
+                            href="{% url 'coin_view' %}?query={{ coin.id|urlencode }}"
+                            class="group grid w-full max-w-[20rem] min-w-0 grid-cols-[2.25rem_minmax(0,1fr)_auto] items-center gap-3 rounded-2xl px-2 py-3 transition-colors hover:bg-white/[0.03] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A970FF]"
+                        >
+                            <span class="flex size-9 items-center justify-center">
+                                {% if coin.image %}
+                                    <img
+                                        src="{{ coin.image }}"
+                                        alt=""
+                                        width="32"
+                                        height="32"
+                                        class="size-8 object-contain"
+                                    >
+                                {% endif %}
+                            </span>
+
+                            <h3
+                                title="{{ coin.name }}"
+                                class="min-w-0 truncate text-sm font-normal transition-colors group-hover:text-[#C7A0FF]"
+                            >
+                                {{ coin.name }}
+                            </h3>
+
+                            <span class="whitespace-nowrap text-right text-base font-medium tabular-nums text-[#FF8C9F]">
+                                {{ coin.percentage_change_24h|floatformat:2 }}%
+                            </span>
+                        </a>
+                    {% empty %}
+                        <p class="col-span-full row-span-full py-8 text-center text-sm text-[#CDBDE5]">
+                            {% if market_notice %}
+                                Loser data unavailable.
+                            {% else %}
+                                No negative movers available.
+                            {% endif %}
+                        </p>
+                    {% endfor %}
+                </div>
+            </section>
+        </div>
+    </section>
+
+    <!-- Top coins -->
+    <section aria-labelledby="top-coins-heading">
+        <h2
+            id="top-coins-heading"
+            class="mb-4 text-center text-2xl font-medium uppercase tracking-wide text-[#A970FF]"
+        >
+            Top Coins
+        </h2>
+
+        <div class="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5 lg:gap-6">
+            {% for coin in popular %}
+                <a
+                    href="{% url 'coin_view' %}?query={{ coin.id|urlencode }}"
+                    class="group flex min-w-0 flex-col items-center rounded-3xl bg-[#1B0140] px-3 py-6 text-center transition-colors hover:bg-[#210647] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#A970FF]"
+                >
+                    <span class="mb-3 flex size-18 items-center justify-center">
+                        {% if coin.image %}
+                            <img
+                                src="{{ coin.image }}"
+                                alt=""
+                                width="64"
+                                height="64"
+                                class="size-16 object-contain"
+                            >
+                        {% endif %}
+                    </span>
+
+                    <h3
+                        title="{{ coin.name }}"
+                        class="w-full truncate text-xl font-medium text-[#A970FF] transition-colors group-hover:text-[#C7A0FF]"
+                    >
+                        {{ coin.name }}
+                    </h3>
+
+                    <div class="mt-3 flex w-full flex-wrap items-center justify-center gap-x-3 gap-y-1 xl:gap-x-4">
+                        <p class="text-base font-normal tabular-nums text-[#F5F0FF]">
+                            {% if coin.price is not None %}
+                                {% if coin.price == 0 %}
+                                    $0.00
+                                {% elif coin.price >= 0.01 %}
+                                    ${{ coin.price|floatformat:"2g" }}
+                                {% elif coin.price >= 0.0001 %}
+                                    ${{ coin.price|floatformat:6 }}
+                                {% elif coin.price >= 0.00000001 %}
+                                    ${{ coin.price|floatformat:8 }}
+                                {% else %}
+                                    &lt; $0.00000001
+                                {% endif %}
+                            {% else %}
+                                <span class="text-[#CDBDE5]">
+                                    Unavailable
+                                </span>
+                            {% endif %}
+                        </p>
+
+                        {% if coin.percentage_change_24h is None %}
+                            <span class="text-sm text-[#CDBDE5]">
+                                Change unavailable
+                            </span>
+                        {% else %}
+                            <span class="inline-flex items-center gap-1.5 whitespace-nowrap">
+                                <span class="text-sm font-medium tabular-nums {% if coin.trend == 'up' %}text-[#66E5A5]{% elif coin.trend == 'down' %}text-[#FF8C9F]{% else %}text-[#D8C9ED]{% endif %}">
+                                    {% if coin.trend == 'up' %}+{% endif %}{{ coin.percentage_change_24h|floatformat:2 }}%
+                                </span>
+                            </span>
+                        {% endif %}
+                    </div>
+                </a>
+            {% empty %}
+                <p class="rounded-3xl bg-[#1B0140] px-5 py-8 text-center text-sm text-[#CDBDE5] sm:col-span-2 lg:col-span-5">
+                    Market data temporarily unavailable.
+                </p>
+            {% endfor %}
+        </div>
+    </section>
 </div>
 {% endblock %}
