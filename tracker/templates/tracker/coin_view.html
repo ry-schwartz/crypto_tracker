@@ -6,7 +6,7 @@
 <div class="mb-4">
     <a
         href="{% url 'home' %}"
-        class="inline-flex items-center gap-2 rounded text-sm text-[#A970FF] transition-colors hover:text-[#C7A0FF] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#A970FF]"
+        class="inline-flex items-center gap-2 rounded text-sm text-[#F5F0FF] transition-colors hover:text-[#C7A0FF] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#A970FF]"
     >
         <span aria-hidden="true">&larr;</span>
         Back to Dashboard
@@ -40,7 +40,7 @@
 
         <h1
             id="coin-heading"
-            class="break-words text-center text-2xl font-medium text-[#A970FF]"
+            class="break-words text-center text-2xl font-medium text-[#F5F0FF]"
         >
             {{ coin.name|default:"Coin unavailable" }}
         </h1>
@@ -53,7 +53,7 @@
     >
         <h2
             id="stats-heading"
-            class="mb-6 text-center text-xl font-medium uppercase tracking-wide text-[#A970FF]"
+            class="mb-6 text-center text-xl font-medium uppercase tracking-wide text-[#F5F0FF]"
         >
             Quick Stats
         </h2>
@@ -63,7 +63,7 @@
                 <dt class="order-2 mt-2 text-xs text-[#B7A3CF]">
                     Price
                 </dt>
-                <dd class="order-1 break-words text-xl font-medium tabular-nums text-[#C7A0FF] xl:text-2xl">
+                <dd class="order-1 break-words text-xl font-medium tabular-nums text-[#F5F0FF] xl:text-2xl">
                     {% if coin and coin.price is not None %}
                         {% if coin.price == 0 %}
                             $0.00
@@ -86,7 +86,7 @@
                 <dt class="order-2 mt-2 text-xs text-[#B7A3CF]">
                     24 Hour Volume
                 </dt>
-                <dd class="order-1 break-words text-xl font-medium tabular-nums text-[#C7A0FF] xl:text-2xl">
+                <dd class="order-1 break-words text-xl font-medium tabular-nums text-[#F5F0FF] xl:text-2xl">
                     {% if coin.volume and coin.volume != 'N/A' %}
                         ${{ coin.volume }}
                     {% else %}
@@ -130,7 +130,7 @@
     >
         <h2
             id="news-heading"
-            class="mb-5 shrink-0 text-center text-xl font-medium uppercase tracking-wide text-[#A970FF]"
+            class="mb-5 shrink-0 text-center text-xl font-medium uppercase tracking-wide text-[#F5F0FF]"
         >
             News
         </h2>
@@ -181,7 +181,7 @@
     >
         <h2
             id="chart-heading"
-            class="mb-5 shrink-0 text-center text-xl font-medium uppercase tracking-wide text-[#A970FF]"
+            class="mb-5 shrink-0 text-center text-xl font-medium uppercase tracking-wide text-[#F5F0FF]"
         >
             30 Day Price Chart
         </h2>
@@ -289,7 +289,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 datasets: [{
                     label: 'Price',
                     data: prices,
-                    borderColor: '#A970FF',
+                    borderColor: '#F5F0FF',
                     backgroundColor: 'rgba(169, 112, 255, 0.07)',
                     borderWidth: 2,
                     fill: 'origin',
